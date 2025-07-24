@@ -1,6 +1,8 @@
 #pragma once
 #include "geometry.hpp"
 #include "queries.hpp"
+#include <algorithm>
+#include <optional>
 #include <print>
 #include <random>
 #include <ranges>
@@ -63,27 +65,45 @@ private:
     std::uniform_int_distribution<int> type_dist;
 };
 
-std::vector<std::pair<Shape, Shape>> FindAllCollisions(ReplaceMe shapes) {
-    std::vector<std::pair<Shape, Shape>> collisions;
+std::vector<std::pair<Shape, Shape>> FindAllCollisions(const std::span<Shape> shapes) {
 
     /*
      * Используйте библиотеку ranges, чтобы найти все коллизии между фигурами методом BoundingBoxesOverlap
      *
      * Также используйте наиболее эффективный метод добавления объектов в collisions
      */
+    // clang-format off
+     auto indices = views::iota(0u, shapes.size());
+     return views::cartesian_product(indices, indices) | 
+                                        // Исключение сравнения объекта с самим собой
+                                        views::filter([](const auto &p) { return std::get<0>(p) < std::get<1>(p); }) |
+                                        // Оставляем только фигуры, в которых есть коллизии
+                                        views::filter([&](const auto& pair_idx){
+                                            return queries::BoundingBoxesOverlap(shapes[std::get<0>(pair_idx)], shapes[std::get<1>(pair_idx)]); } ) | 
+                                        views::transform([&](const auto& pair_idx){
+                                            return std::make_pair(shapes[std::get<0>(pair_idx)], shapes[std::get<1>(pair_idx)]);
+                                        }) | 
+                                        rng::to<std::vector<std::pair<Shape, Shape>>>();
+    // clang-format on
 
-    return collisions;
 }
 
-std::optional<size_t> FindHighestShape(ReplaceMe shapes) {
+std::optional<size_t> FindHighestShape(const std::span<Shape> shapes) {
 
     /*
      * Используйте библиотеку ranges, чтобы найти самую высокую фигуру
      *
      * Важно: использование ручной итерации по фигурам не разрешается
      */
+    if (shapes.empty()) {
+        return std::nullopt;
+    }
 
-    return std::nullopt;
+    auto indices = views::iota(0u, shapes.size());
+
+    auto max_iterator = rng::max_element(indices, {}, [&](size_t i) { return queries::GetHeight(shapes[i]); });
+
+    return *max_iterator;
 }
 
 }  // namespace geometry::utils

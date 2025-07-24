@@ -61,6 +61,7 @@ void Draw(std::span<geometry::Shape> shapes) {
 
     // Display plot
     f->show();
+
 }
 
 void Draw(std::span<const geometry::triangulation::DelaunayTriangle> triangles) {
@@ -82,7 +83,7 @@ void Draw(std::span<const geometry::triangulation::DelaunayTriangle> triangles) 
         const auto lines = tri.Lines();
         plot(lines.x, lines.y)->line_width(2).color("cyan");
 
-        // Add triangle number
+        // Add triangle number./
         const auto center = tri.Center();
         auto t = text(center.x, center.y, std::to_string(index));
         t->font_size(14);
@@ -91,6 +92,7 @@ void Draw(std::span<const geometry::triangulation::DelaunayTriangle> triangles) 
 
     // Display plot
     f->show();
+
 }
 
 }  // namespace geometry::visualization

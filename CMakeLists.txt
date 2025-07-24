@@ -65,3 +65,7 @@ target_include_directories(${PROJECT_NAME}_tests PRIVATE ${CMAKE_CURRENT_SOURCE_
 # Включаем тестирование
 enable_testing()
 add_test(NAME ${PROJECT_NAME}_tests COMMAND ${PROJECT_NAME}_tests)
+
+# Автоматически находим и добавляем тесты в CTest
+include(GoogleTest)
+gtest_discover_tests(${PROJECT_NAME}_tests)

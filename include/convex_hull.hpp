@@ -24,6 +24,6 @@ private:
     std::vector<Point2D> s;
 };
 
-GeometryResult<std::vector<Point2D>> GrahamScan(ReplaceMe points);
+std::expected<Polygon, GeometryError> GrahamScan(const std::span<Shape> shapes);
 
 }  // namespace geometry::convex_hull
