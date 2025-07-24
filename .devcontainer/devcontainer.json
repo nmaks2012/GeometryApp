@@ -4,6 +4,12 @@
       "dockerfile": "./Dockerfile",
       "context": "."
   },
+  "runArgs": [
+    "--env", "DISPLAY=192.168.3.4:0.0"
+  ],
+  "containerEnv": {
+    "DISPLAY": "192.168.3.4:0.0"
+  },
   "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
   "customizations": {
     "vscode": {
@@ -14,8 +20,5 @@
         "ms-vscode.cmake-tools"
       ]
     }
-  },
-  "mounts": [
-    "source=${env:HOME}/.gitconfig,target=/etc/gitconfig,type=bind,consistency=cached"
-  ]
+  }
 }
